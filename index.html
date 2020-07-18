@@ -43,21 +43,7 @@
     <main class="container-sm  bg-info border p-2 my-3 text-white" style="margin-top:30px">
         <form id="quizForm">
             <h3 class="text-center">Lord of the Rings Quiz</h3>
-            <div class="form-group card bg-secondary shadow-lg">
-                <div class="card-body">
-                    <label for="userAns1">Question?</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="userAns1" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text bg-warning" id="basic-addon2">
-                                <i class="fa fa-lg fa-asterisk text-primary"></i>
-                                <i class="fa fa-lg fa-thumbs-up text-success" aria-label="correct"></i>
-                                <i class="fa fa-lg fa-thumbs-down text-danger" aria-label="incorrect"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <input type="text" hidden value="Answer" id="correctAns1">
-                </div>
+            <div id="qList">
             </div>
 
             <div class="btn-group" id="btn-quiz" role="group" aria-label="Select score or clear">
@@ -79,10 +65,8 @@
     <script>
         // Any global settings that are needed for this to run.
         function init() {
-
-
-
-
+            let qList = document.getElementById("qList");
+            buildQuiz(qList);
         }
 
         function makeQuestion(question, answer) {
@@ -114,16 +98,23 @@
         function scrQuiz {
 
         }
-
-        function clrQuiz {
+         
+        function buildQuiz {
 
         }
 
+        function clrQuiz {
+            let qList = document.getElementById("qList");
+            qList.innerHTML = null;
+            buildQuiz(qList);
+        }
+
+        var quizNumber = 0; 
 
         var quizTitles = [
             "Lord of the Rings Quiz",
             "The Office Quiz"
-        ]
+        ];
 
         var lotrQuestions = [{
             question: "In Mordor, what kind of food does Frodo say he can't remember the taste of?",
@@ -140,7 +131,7 @@
         }, {
             question: "What does Aragorn say right before charging into the last battle in Mordor?",
             answers: "For Frodo"
-        }]
+        }];
 
         var officeQuestions = [{
             question: "What does Dwight grow on Schrute Farms?",
@@ -157,7 +148,7 @@
         }, {
             question: "What does Dwight stop Michael from eating in the woods?",
             answers: "mushrooms"
-        }]
+        }];
 
         // <i class="fa fa-lg fa-thumbs-up text-success" aria-label="correct"></i>
         //                         <i class="fa fa-lg fa-thumbs-down text-danger" aria-label="incorrect"></i>
