@@ -42,7 +42,7 @@
 
     <main class="container-sm  bg-info border p-2 my-3 text-white" style="margin-top:30px">
         <form id="quizForm">
-            <h3 class="text-center">Lord of the Rings Quiz</h3>
+            <h3 class="text-center" id="qTitle">Lord of the Rings Quiz</h3>
             <div id="qList">
             </div>
 
@@ -98,9 +98,27 @@
         function scrQuiz {
 
         }
-         
-        function buildQuiz {
 
+        function buildQuiz(qListEL) {
+            let qTitle = document.getElementById("qTitle");
+            if (quizNumber == 1) {
+                quizNumber = 0;
+                addQuestions(qListEL, lotrQuestions);
+            } else {
+                quizNumber = 1;
+                addQuestions(qListEL, officeQuestions);
+            }
+            qTitle.value = quizTitles[quizNumber]; 
+        };
+
+        function addQuestions(qListEL, questions) {
+
+            questions.forEach(function (question) {
+
+                var template = makeQuestion(question, question.answers);
+
+                qListEL.appendChild(template);
+            });
         }
 
         function clrQuiz {
@@ -109,7 +127,7 @@
             buildQuiz(qList);
         }
 
-        var quizNumber = 0; 
+        var quizNumber = 0;
 
         var quizTitles = [
             "Lord of the Rings Quiz",
