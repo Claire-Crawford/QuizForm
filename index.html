@@ -85,6 +85,28 @@
 
         }
 
+        function makeQuestion(question, answer) {
+            let template = `
+            <div class="form-group card bg-secondary shadow-lg">
+                <div class="card-body">
+                    <label for="userAns1">${question}</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="userAns1" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-warning" id="basic-addon2">
+                                <i class="fa fa-lg fa-asterisk text-primary"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="text" hidden value=${answer} id="correctAns1">
+                </div>
+            </div>
+            `;
+
+            return template;
+        }
+
+
         function updProgress() {
 
         }
@@ -137,6 +159,8 @@
             answers: "mushrooms"
         }]
 
+        // <i class="fa fa-lg fa-thumbs-up text-success" aria-label="correct"></i>
+        //                         <i class="fa fa-lg fa-thumbs-down text-danger" aria-label="incorrect"></i>
 
         // Make sure to initialize the script.
         init();
