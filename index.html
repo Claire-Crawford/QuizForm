@@ -18,6 +18,7 @@
 <style>
     #btn-quiz {
         margin-left: 2rem;
+        margin-right: 1.4rem;
     }
 
     #btn-quiz button {
@@ -32,6 +33,10 @@
     #quizForm .card {
         margin: 0 2rem 1rem 2rem;
     }
+
+    #qTitle {
+        margin: 2rem 0 3rem 0;
+    }
 </style>
 
 <body>
@@ -40,25 +45,27 @@
         <h2>Global Campus Assignment</h2>
     </header>
 
-    <main class="container-sm  bg-info border p-2 my-3 text-white" style="margin-top:30px">
-        <form id="quizForm">
-            <h3 class="text-center" id="qTitle">title</h3>
+    <main class="container-sm bg-info border p-2 my-3 text-white" style="margin-top:30px">
+        <form id="quizForm" class="shadow">
+            <h1 class="text-center" id="qTitle">title</h1>
+            <p class="text-center" >Click "clear" to switch to a different quiz!</p>
+            <h2 class="text-center" id="qScore"></h2>
             <div id="qList">
             </div>
 
-            <div class="btn-group" id="btn-quiz" role="group" aria-label="Select score or clear">
+            <div class="btn-group d-flex" id="btn-quiz" role="group" aria-label="Select score or clear">
                 <button type="button" onClick="scrQuiz();"
-                    class="btn btn-primary border shadow p-3 mb-5 rounded">Score</button>
+                    class="btn btn-primary border shadow p-3 mb-5 rounded-pill">Score</button>
                 <button type="button" onClick="clrQuiz();"
-                    class="btn btn-primary border shadow p-3 mb-5 rounded">Clear</button>
+                    class="btn btn-primary border shadow p-3 mb-5 rounded-pill">Clear</button>
             </div>
         </form>
     </main>
 
     <footer class="jumbotron text-center" style="margin-bottom:0">
-        <label for="quiz">Progress completing quiz:</label>
-        <progress id="quiz" value="0" max="5"> 0 </progress>
-        <p>by Claire Crawford</p>
+        <label for="quizProg">Quiz Progress:</label>
+        <progress id="quizProg" value="0" max="5"> 0 </progress>
+        <p>by Sherrie Teague</p>
     </footer>
 
 
@@ -73,14 +80,16 @@
         function makeQuestion(id, question, answer) {
             let userId = "userAns" + id;
             let correctId = "correctAns" + id;
+            let thumbId = "thumb" + id;
+            let cardId = "card" + id;
             let template = `
-            <div class="form-group card bg-secondary shadow-lg">
+            <div class="form-group card bg-secondary shadow-lg" id=${cardId}>
                 <div class="card-body">
                     <label for= ${userId}>${question}</label>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id=${userId} required>
+                        <input type="text" class="form-control" id=${userId} onfocusout="updProgress()" required>
                         <div class="input-group-append">
-                            <span class="input-group-text bg-warning" id="basic-addon2">
+                            <span class="input-group-text" id=${thumbId}>
                                 <i class="fa fa-lg fa-asterisk text-primary"></i>
                             </span>
                         </div>
@@ -95,38 +104,107 @@
 
 
         function updProgress() {
+            // count number of questions that have answers
+            // Init count to 0
+            let count = 0;
 
+            // For each question
+            for (id = 1; id < 6; id++) {
+                let userAnsId = "userAns" + id;
+                let userAnsIn = document.getElementById(userAnsId);
+                let userAns = userAnsIn.value;
+
+                if (userAns.length === 0) {
+                    // Empty
+
+                } else {
+                    count++;
+                }
+            }
+            let progBar = document.getElementById("quizProg");
+            progBar.value = count;
         };
 
-        function scrQuiz() {
+        function isCorrect(id) {
+            let userAnsId = "userAns" + id;
+            let correctAnsId = "correctAns" + id;
+            let userAnsIn = document.getElementById(userAnsId);
+            let correctAnsIn = document.getElementById(correctAnsId);
+            let userAns = userAnsIn.value;
+            let correctAns = new RegExp(correctAnsIn.value, "i");
+            let res = correctAns.test(userAns);
 
+            return res;
+        }
+
+        function scrQuiz() {
+            // Init count to 0
+            let count = 0;
+
+            // For each question.
+            for (id = 1; id < 6; id++) {
+                let thumbId = "thumb" + id;
+                let thumbEl = document.getElementById(thumbId);
+                let cardId = "card" + id;
+                let cardEl = document.getElementById(cardId);
+
+                //   Check for isCorrect.
+                if (isCorrect(id)) {
+                    //   Increment the count if correct
+                    count++;
+
+                    // style for success 
+                    thumbEl.innerHTML = '<i class="fa fa-lg fa-thumbs-up text-success" aria-label="correct"></i>'
+                    thumbEl.className += " bg-light";
+                    cardEl.className = "form-group card bg-success shadow-lg";
+                } else {
+                    // style for warning 
+                    thumbEl.innerHTML = '<i class="fa fa-lg fa-thumbs-down text-danger" aria-label="incorrect"></i>'
+                    thumbEl.className += " bg-warning";
+                    cardEl.className = "form-group card bg-warning shadow-lg";
+
+                }
+            }
+
+            // Alert user of # of correct
+            let qScore = document.getElementById("qScore");
+            qScore.innerText = "You answered " + count + " out of 5 correctly.";
         };
 
         function buildQuiz(qListEL) {
+            // Find the quiz title element
             let qTitle = document.getElementById("qTitle");
+
             if (quizNumber == 1) {
                 quizNumber = 0;
-                // addQuestions(qListEL, lotrQuestions);
+                addQuestions(qListEL, lotrQuestions);
             } else {
                 quizNumber = 1;
-                // addQuestions(qListEL, officeQuestions);
+                addQuestions(qListEL, officeQuestions);
             }
-            qTitle.innerText = quizTitles[quizNumber]; 
+
+            qTitle.innerText = quizTitles[quizNumber];
         };
 
         function addQuestions(qListEL, questions) {
 
             questions.forEach(function (question) {
+                var div = document.createElement("div");
+                var template = makeQuestion(question.id, question.question, question.answers);
+                div.innerHTML = template;
 
-                var template = makeQuestion(question.questions, question.answers);
-
-                qListEL.appendChild(template);
+                qListEL.appendChild(div);
             });
         };
 
         function clrQuiz() {
+            // Find the question list 
             let qList = document.getElementById("qList");
+
+            // Clears the question list
             qList.innerHTML = null;
+
+            // Builds a new list
             buildQuiz(qList);
         };
 
@@ -140,49 +218,47 @@
         var lotrQuestions = [{
             "id": 1,
             "question": "In Mordor, what kind of food does Frodo say he can't remember the taste of?",
-            "answers": "strawberries"
+            "answers": "strawberry|strawberries"
         }, {
-            "id":2,
+            "id": 2,
             "question": "How many hobbits INITIALLY set out from the Shire?",
-            "answers": "2"
+            "answers": "2|two"
         }, {
-            "id":3,
+            "id": 3,
             "question": "What is Samwise's last name?",
             "answers": "Gamgee"
         }, {
-            "id":4,
+            "id": 4,
             "question": "What is the name of the local pub in Hobbiton?",
             "answers": "Green Dragon"
         }, {
-            "id":5,
+            "id": 5,
             "question": "What does Aragorn say right before charging into the last battle in Mordor?",
             "answers": "For Frodo"
         }];
 
         var officeQuestions = [{
-            "id":1,
+            "id": 1,
             "question": "What does Dwight grow on Schrute Farms?",
-            "answers": "beets"
+            "answers": "beet|beets"
         }, {
-            "id":2,
+            "id": 2,
             "question": "Which Toy Story character is Holly's doll that Michael throws in the trash and pours coffee on?",
             "answers": "Woody"
         }, {
-            "id":3,
+            "id": 3,
             "question": '"_____, you failed art school. Boom, roasted."(Whose name goes in the blank)?',
             "answers": "Pam"
         }, {
-            "id":4,
+            "id": 4,
             "question": "Aside from Jim, who in the office has an obvious crush on Pam throughout the show?",
             "answers": "Toby"
         }, {
-            "id":5,
+            "id": 5,
             "question": "What does Dwight stop Michael from eating in the woods?",
-            "answers": "mushrooms"
+            "answers": "mushroom|mushrooms"
         }];
 
-        // <i class="fa fa-lg fa-thumbs-up text-success" aria-label="correct"></i>
-        //                         <i class="fa fa-lg fa-thumbs-down text-danger" aria-label="incorrect"></i>
 
         // Make sure to initialize the script.
         init();
