@@ -48,7 +48,7 @@
     <main class="container-sm bg-info border p-2 my-3 text-white" style="margin-top:30px">
         <form id="quizForm" class="shadow">
             <h1 class="text-center" id="qTitle">title</h1>
-            <p class="text-center" >Click "clear" to switch to a different quiz!</p>
+            <p class="text-center">Click "clear" to switch to a different quiz!</p>
             <h2 class="text-center" id="qScore"></h2>
             <div id="qList">
             </div>
@@ -206,6 +206,10 @@
 
             // Builds a new list
             buildQuiz(qList);
+
+            // update progress bar 
+            updProgress();
+
         };
 
         var quizNumber = 0;
